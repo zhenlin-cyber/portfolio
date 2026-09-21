@@ -38,7 +38,6 @@
     .fc-studio-grid { grid-template-columns:1fr !important; gap:48px !important; }
   }
 </style>
-<script src="./image-slot.js"></script>
 </helmet>
 
 <div id="top" data-screen-label="Foldcraft Hero" style="position:relative; height:100vh; width:100%; overflow:hidden; background:radial-gradient(120% 90% at 50% -10%, #0c2742 0%, #071a30 32%, #04101f 60%, #020a14 100%); font-family:'Geist',sans-serif;">
@@ -109,7 +108,7 @@
     <!-- card 1 -->
     <a class="fc-card" href="case-rescue-match.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
       <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
-        <image-slot id="work-rescue-match" shape="rect" fit="cover" src="assets/slot-work-rescue-match.webp" placeholder="Drop a Rescue Match screenshot"></image-slot>
+        <img src="assets/slot-work-rescue-match.webp" alt="Rescue Match constellation portal" style="display:block; width:100%; height:100%; object-fit:cover;">
         <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
           <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Most adoption sites are search engines. This one is a story: a scroll-driven 3D portal, three small choices, and a real Bay Area rescue animal who entered the shelter system on your exact birthday. React 19, Three.js, and the RescueGroups v5 API across roughly twenty shelters.</p>
           <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
@@ -127,7 +126,7 @@
     <!-- card 2 -->
     <a class="fc-card" href="case-batchboard.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
       <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#0b1c2f;">
-        <image-slot id="work-batchboard" shape="rect" fit="cover" src="assets/batchboard.png" placeholder="Drop a Batchboard screenshot"></image-slot>
+        <img src="assets/batchboard.png" alt="Raw material batchboard dashboard" style="display:block; width:100%; height:100%; object-fit:cover;">
         <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
           <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Rebuilt the raw-material lifecycle visibility lost in BioMarin's Oracle-to-SAP cutover. SAP and LIMS unified into one row per batch — 7 lifecycle stages, 3 cycle-time segments, QC testing split from QA release, and 446 batches surfaced in a single interactive view.</p>
           <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
@@ -145,7 +144,7 @@
     <!-- card 3 -->
     <a class="fc-card" href="case-rent-splitter.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
       <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
-        <image-slot id="work-rent-splitter" shape="rect" fit="cover" src="assets/slot-work-rent-splitter.webp" placeholder="Drop a Rent Splitter screenshot"></image-slot>
+        <img src="assets/slot-work-rent-splitter.webp" alt="Rent Splitter expense breakdown" style="display:block; width:100%; height:100%; object-fit:cover;">
         <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
           <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">A shared-cost ledger for roommates. Costs split by equal share, square footage, percentage, or single payer, with manual adjustments and a per-person breakdown of every line. Groups, shareable splits, and Firebase auth.</p>
           <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
@@ -163,7 +162,7 @@
     <!-- card 4 -->
     <a class="fc-card" href="case-contract-review.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
       <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
-        <image-slot id="work-contract-review" shape="rect" fit="cover" src="assets/slot-work-contract-review.webp" placeholder="Drop a Contract Review screenshot"></image-slot>
+        <img src="assets/slot-work-contract-review.webp" alt="Contract Review clause scoring" style="display:block; width:100%; height:100%; object-fit:cover;">
         <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
           <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Reads any Canvas or EdTech data processing agreement against fifteen California laws and ethics frameworks, scores every clause, and returns remediation language a legal team can use.</p>
           <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
