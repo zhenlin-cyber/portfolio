@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#020a14; }
+  a { color:#3fd2ff; text-decoration:none; transition:color .25s ease; }
+  a:hover { color:#8ae4ff; }
+  .cs-metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(24px,2.5vw,48px); }
+  @media (max-width:819px) { .cs-metrics { grid-template-columns:1fr 1fr; gap:28px; } }
+</style>
+</helmet>
+
+<article data-screen-label="Case: Batchboard" style="background:linear-gradient(180deg,#020a14 0%,#061829 45%,#0c2540 100%); color:#eaf1f8; font-family:'Geist',sans-serif; min-height:100vh; padding:clamp(32px,5vh,56px) clamp(20px,3vw,48px) clamp(80px,12vh,140px);">
+  <div style="max-width:min(1680px,94vw); margin:0 auto;">
+
+    <a href="home.dc.html#work" style="display:inline-block; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.6); margin-bottom:clamp(48px,8vh,96px);">← Selected Work</a>
+
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px; font-size:15px; color:rgba(190,215,240,0.6); margin-bottom:22px;">
+      <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>BioMarin, Novato Supply Chain Operations</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>Power BI, SQL, Databricks, DAX</span>
+    </div>
+
+    <h1 style="margin:0 0 clamp(28px,4vh,44px); font-size:clamp(2.2rem,5.2vw,4rem); font-weight:500; letter-spacing:-0.03em; line-height:1.04;">Raw Material Batchboard &amp; <em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">Inventory Dashboard</em></h1>
+
+    <p style="margin:0 0 24px; font-size:clamp(1.3rem,2.2vw,1.85rem); line-height:1.5; color:#eaf1f8; max-width:min(1100px, 72ch); text-wrap:pretty;">The Oracle-to-SAP cutover cost the Novato site its view of raw material readiness. Tracking scattered across SAP, LIMS, spreadsheets, and email, and Supply Chain, QC, and QA were each working from a different partial picture.</p>
+
+    <p style="margin:0 0 clamp(56px,9vh,104px); font-size:clamp(17px,1.35vw,19px); line-height:1.7; color:rgba(190,215,240,0.72); max-width:min(1000px, 70ch); text-wrap:pretty;">I unified SAP purchase order, goods receipt, batch, and usage decision data with LIMS sampling, testing, and closure records into one Power BI lifecycle row per batch. QC testing was split from QA release so each function could see its own step and its hand-offs, and stage-level cycle timing was added across goods receipt, sampling, closure, and usage decision.</p>
+
+    <figure style="margin:0 0 clamp(48px,7vh,80px);">
+      <div style="border-radius:14px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#fff;">
+        <img src="assets/batchboard.png" alt="Raw Material Lifecycle Batchboard in Power BI" style="display:block; width:100%; height:auto;">
+      </div>
+      <figcaption style="margin-top:24px; font-size:23px; line-height:1.6; color:rgba(190,215,240,0.55); max-width:min(1000px, 78ch);">KPI cards across the top, batch-status distribution below, and a per-batch stage timeline at right showing cycle days instead of check marks — red outlines mark batches running over process. Purchase order, material, and batch identifiers are masked here.</figcaption>
+    </figure>
+
+    <figure style="margin:0 0 clamp(48px,7vh,80px);">
+      <div style="border-radius:14px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#0b1c2f;">
+        <img src="assets/image1.png" alt="Three-Input Flammable Locator Dashboard v7" style="display:block; width:100%; height:auto;">
+      </div>
+      <figcaption style="margin-top:24px; font-size:23px; line-height:1.6; color:rgba(190,215,240,0.55); max-width:min(1000px, 78ch);">A companion build for the same site: the Three-Input Flammable Locator Dashboard replaced a manual, locator-by-locator FM Global compliance review at Plant 1000. On-hand inventory, the locator master, and the item master join into one map that classifies each locator and material, calculates gallons, and flags placement discrepancies.</figcaption>
+    </figure>
+
+        <div style="height:1px; background:rgba(190,215,240,0.14); margin-bottom:clamp(40px,6vh,64px);"></div>
+
+    <h2 style="margin:0 0 clamp(28px,4vh,40px); font-size:clamp(1.1rem,1.6vw,1.25rem); font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.5);">Outcome</h2>
+
+    <div class="cs-metrics" style="margin-bottom:clamp(48px,7vh,80px);">
+      <div>
+        <div style="font-size:clamp(2.2rem,4vw,3.2rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">446</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Batches visible in one lifecycle view — 389 awaiting receipt, 25 over process.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.2rem,4vw,3.2rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">7</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Lifecycle stages tracked, across three cycle-time segments.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.2rem,4vw,3.2rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">1,798</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Locators mapped at Plant 1000 against 262 specced materials.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.2rem,4vw,3.2rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">2</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Automated placement-discrepancy checks, ready for FM Global review.</p>
+      </div>
+    </div>
+
+    <p style="margin:0; font-size:clamp(17px,1.35vw,19px); line-height:1.7; color:rgba(190,215,240,0.72); max-width:min(1000px, 70ch); text-wrap:pretty;">Both dashboards were people problems as much as data problems. The information existed, but it lived in different systems and different teams, and much of the process knowledge lived only in people's heads. I reviewed the logic with Supply Chain, QC, QA, and Operations throughout, keeping the rules transparent so the prototypes can scale into governed Power BI reports.</p>
+
+  </div>
+</article>
+</x-dc>
+</body>
+</html>

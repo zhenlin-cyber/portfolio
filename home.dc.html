@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/misc/GPUComputationRenderer.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/math/MeshSurfaceSampler.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .fc-desknav { display:flex; gap:30px; }
+  .fc-deskbtn { display:flex; }
+  .fc-burger { display:none; }
+  @media (max-width:819px) {
+    .fc-desknav { display:none; }
+    .fc-deskbtn { display:none; }
+    .fc-burger { display:flex; }
+  }
+  .fc-work-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:80px 56px; }
+  .fc-card-img { transition:transform 0.5s cubic-bezier(.2,.7,.2,1), border-color 0.4s ease; }
+  .fc-card:hover .fc-card-img { transform:translateY(-6px); border-color:rgba(63,210,255,0.4); }
+  .fc-card:hover .fc-card-title { color:#3fd2ff; }
+  .fc-card-title { transition:color 0.3s ease; }
+  .fc-reveal { opacity:0; transition:opacity 0.45s cubic-bezier(.2,.7,.2,1); }
+  .fc-card-img:hover .fc-reveal { opacity:1; }
+  @media (max-width:819px) {
+    .fc-work-grid { grid-template-columns:1fr; gap:56px; }
+    .fc-studio-grid { grid-template-columns:1fr !important; gap:48px !important; }
+  }
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div id="top" data-screen-label="Foldcraft Hero" style="position:relative; height:100vh; width:100%; overflow:hidden; background:radial-gradient(120% 90% at 50% -10%, #0c2742 0%, #071a30 32%, #04101f 60%, #020a14 100%); font-family:'Geist',sans-serif;">
+
+  <!-- top light beam -->
+  <div style="position:absolute; top:-30%; left:50%; transform:translateX(-50%); width:70%; height:80%; pointer-events:none; background:radial-gradient(60% 60% at 50% 0%, rgba(74,180,255,0.16) 0%, rgba(40,120,210,0.05) 40%, rgba(0,0,0,0) 70%); filter:blur(6px);"></div>
+
+  <canvas ref="{{ canvasRef }}" style="position: absolute; inset: 92px 0px 0px 192px; width: 100%; height: 100%; display: block;"></canvas>
+
+  <!-- CTA hit area (over reassembled particle button) -->
+  <div onClick="{{ onCta }}" style="{{ ctaStyle }}"></div>
+
+  <!-- NAVBAR -->
+  <nav style="position:relative; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:clamp(12px,1.7vh,17px) clamp(20px,4vw,48px); pointer-events:auto;">
+    <div style="display:flex; align-items:center; gap:clamp(20px,3vw,34px);">
+      <div class="fc-desknav">
+        <a href="#top" style="font-size:13px; color:rgba(255,255,255,0.78); text-decoration:none; cursor:pointer;">Home</a>
+        <a href="#work" style="font-size:13px; color:rgba(255,255,255,0.78); text-decoration:none; cursor:pointer;">Projects</a>
+        <a href="#studio" style="font-size:13px; color:rgba(255,255,255,0.78); text-decoration:none; cursor:pointer;">Studio</a>
+        <a href="#reach" style="font-size:13px; color:rgba(255,255,255,0.78); text-decoration:none; cursor:pointer;">Reach Us</a>
+      </div>
+    </div>
+    <a href="mailto:zhen_lin@berkeley.edu" class="fc-deskbtn" style="background:#fff; color:#04101f; padding:7px 16px; border-radius:8px; font-size:13px; font-weight:500; text-decoration:none; cursor:pointer;">Let's Talk</a>
+    <button class="fc-burger" onClick="{{ toggleMenu }}" style="width:34px; height:34px; align-items:center; justify-content:center; background:transparent; border:none; color:#fff; cursor:pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg>
+    </button>
+  </nav>
+
+  <!-- HERO TEXT (revealed on click; opacity driven imperatively) -->
+  <div ref="{{ heroRef }}" style="{{ heroStyle }}">
+    <h1 style="font-size: clamp(1rem,3.0vw,4.4rem); font-weight: 500; line-height: 1.08; letter-spacing: -0.025em; color: #fff"><br>Hi, I'm Zhen Lin — I build innovative data solutions for the overlooked</h1>
+    <p style="font-size:clamp(18px,2.2vw,30px); line-height:1.4; color:rgba(214,230,246,0.9); margin-top:clamp(18px,2.6vh,28px); max-width:680px;">Building with conscience, driven by awareness and taste, asking who benefits and who bears the burden.</p>
+  </div>
+
+  <!-- hint -->
+  <div ref="{{ hintRef }}" style="position:absolute; z-index:10; bottom:clamp(34px,6vh,56px); left:50%; transform:translateX(-50%); text-align:center; opacity:1; pointer-events:none;">
+    <div style="font-size:13px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(150,195,235,0.55);">Click anywhere</div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; z-index:40; background:rgba(4,12,24,0.97); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); display:flex; flex-direction:column; justify-content:center; padding:0 clamp(28px,8vw,56px);">
+      <button onClick="{{ closeMenu }}" style="position:absolute; top:18px; right:clamp(20px,5vw,28px); width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:transparent; border:none; color:#fff; cursor:pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div style="display:flex; flex-direction:column; gap:18px;">
+        <a href="#top" onClick="{{ closeMenu }}" style="font-size:clamp(28px,8vw,34px); font-weight:500; color:rgba(255,255,255,0.9); text-decoration:none; cursor:pointer;">Home</a>
+        <a href="#work" onClick="{{ closeMenu }}" style="font-size:clamp(28px,8vw,34px); font-weight:500; color:rgba(255,255,255,0.9); text-decoration:none; cursor:pointer;">Projects</a>
+        <a href="#studio" onClick="{{ closeMenu }}" style="font-size:clamp(28px,8vw,34px); font-weight:500; color:rgba(255,255,255,0.9); text-decoration:none; cursor:pointer;">Studio</a>
+        <a href="#reach" onClick="{{ closeMenu }}" style="font-size:clamp(28px,8vw,34px); font-weight:500; color:rgba(255,255,255,0.9); text-decoration:none; cursor:pointer;">Reach Us</a>
+        <a href="mailto:zhen_lin@berkeley.edu" onClick="{{ closeMenu }}" style="align-self:flex-start; margin-top:22px; background:#fff; color:#04101f; padding:14px 32px; border-radius:999px; font-size:16px; font-weight:500; text-decoration:none; cursor:pointer;">Let's Talk</a>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+<!-- ===================== SELECTED WORK ===================== -->
+<section id="work" data-screen-label="Selected Work" style="background:linear-gradient(180deg, #020a14 0%, #061829 38%, #0c2540 72%, #143150 100%); color:#eaf1f8; font-family:'Geist',sans-serif; padding:clamp(72px,11vh,140px) clamp(24px,5vw,64px) clamp(80px,12vh,150px);">
+
+  <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:clamp(48px,7vh,84px);">
+    <h2 style="margin:0; font-size:clamp(2.2rem,5vw,3.8rem); font-weight:500; letter-spacing:-0.02em; line-height:1;"><em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">Selected</em> Work</h2>
+    <span style="width:9px; height:9px; border-radius:50%; background:#3fd2ff; margin-top:6px; box-shadow:0 0 14px rgba(63,210,255,0.8);"></span>
+  </div>
+
+  <div class="fc-work-grid">
+
+    <!-- card 1 -->
+    <a class="fc-card" href="case-rescue-match.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
+      <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
+        <image-slot id="work-rescue-match" shape="rect" fit="cover" placeholder="Drop a Rescue Match screenshot"></image-slot>
+        <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
+          <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Most adoption sites are search engines. This one is a story: a scroll-driven 3D portal, three small choices, and a real Bay Area rescue animal who entered the shelter system on your exact birthday. React 19, Three.js, and the RescueGroups v5 API across roughly twenty shelters.</p>
+          <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:26px; font-size:14px; color:rgba(190,215,240,0.55);">
+        <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>Live</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>React, Three.js</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>Web</span>
+      </div>
+      <h3 class="fc-card-title" style="margin:14px 0 0; font-size:clamp(1.5rem,2.4vw,2rem); font-weight:600; letter-spacing:-0.02em;">Rescue Match</h3>
+    </a>
+
+    <!-- card 2 -->
+    <a class="fc-card" href="case-batchboard.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
+      <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#0b1c2f;">
+        <image-slot id="work-batchboard" shape="rect" fit="cover" src="assets/batchboard.png" placeholder="Drop a Batchboard screenshot"></image-slot>
+        <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
+          <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Rebuilt the raw-material lifecycle visibility lost in BioMarin's Oracle-to-SAP cutover. SAP and LIMS unified into one row per batch — 7 lifecycle stages, 3 cycle-time segments, QC testing split from QA release, and 446 batches surfaced in a single interactive view.</p>
+          <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:26px; font-size:14px; color:rgba(190,215,240,0.55);">
+        <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>BioMarin</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>Power BI, SQL</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>SAP + LIMS</span>
+      </div>
+      <h3 class="fc-card-title" style="margin:14px 0 0; font-size:clamp(1.5rem,2.4vw,2rem); font-weight:600; letter-spacing:-0.02em;">Raw Material Batchboard & Inventory Dashboard</h3>
+    </a>
+
+    <!-- card 3 -->
+    <a class="fc-card" href="case-rent-splitter.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
+      <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
+        <image-slot id="work-rent-splitter" shape="rect" fit="cover" placeholder="Drop a Rent Splitter screenshot"></image-slot>
+        <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
+          <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">A shared-cost ledger for roommates. Costs split by equal share, square footage, percentage, or single payer, with manual adjustments and a per-person breakdown of every line. Groups, shareable splits, and Firebase auth.</p>
+          <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:26px; font-size:14px; color:rgba(190,215,240,0.55);">
+        <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>FairShare</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>React, Firebase</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>Web App</span>
+      </div>
+      <h3 class="fc-card-title" style="margin:14px 0 0; font-size:clamp(1.5rem,2.4vw,2rem); font-weight:600; letter-spacing:-0.02em;">Rent Splitter</h3>
+    </a>
+
+    <!-- card 4 -->
+    <a class="fc-card" href="case-contract-review.dc.html" style="display:block; cursor:pointer; color:inherit; text-decoration:none;">
+      <div class="fc-card-img" style="position:relative; aspect-ratio:16/11; border-radius:12px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));">
+        <image-slot id="work-contract-review" shape="rect" fit="cover" placeholder="Drop a Contract Review screenshot"></image-slot>
+        <div class="fc-reveal" style="position:absolute; inset:0; pointer-events:none; display:flex; flex-direction:column; justify-content:flex-end; gap:16px; padding:clamp(20px,2.2vw,32px); background:linear-gradient(180deg, rgba(2,10,20,0.35) 0%, rgba(2,10,20,0.88) 50%, rgba(3,12,23,0.96) 100%);">
+          <p style="margin:0; font-size:clamp(14px,1.05vw,16px); line-height:1.6; color:rgba(220,236,250,0.86); text-wrap:pretty;">Reads any Canvas or EdTech data processing agreement against fifteen California laws and ethics frameworks, scores every clause, and returns remediation language a legal team can use.</p>
+          <span style="align-self:flex-start; font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:#3fd2ff;">View case study →</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:14px; margin-top:26px; font-size:14px; color:rgba(190,215,240,0.55);">
+        <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>In Progress</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>AI, NLP</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+        <span>Web</span>
+      </div>
+      <h3 class="fc-card-title" style="margin:14px 0 0; font-size:clamp(1.5rem,2.4vw,2rem); font-weight:600; letter-spacing:-0.02em;">Contract Review</h3>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===================== STUDIO ===================== -->
+<section id="studio" data-screen-label="Studio" style="background:linear-gradient(180deg, #143150 0%, #1e4267 50%, #2b5478 100%); color:#eef4f9; font-family:'Geist',sans-serif; padding:clamp(72px,11vh,140px) clamp(24px,5vw,64px) clamp(80px,12vh,150px);">
+
+  <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:clamp(40px,6vh,72px);">
+    <h2 style="margin:0; font-size:clamp(2.2rem,5vw,3.8rem); font-weight:500; letter-spacing:-0.02em; line-height:1;"><em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">The</em> Studio</h2>
+    <span style="width:9px; height:9px; border-radius:50%; background:#7cc6f5; margin-top:6px; box-shadow:0 0 14px rgba(124,198,245,0.8);"></span>
+  </div>
+
+  <div class="fc-studio-grid" style="display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(48px,7vw,110px); align-items:start;">
+
+    <!-- bio -->
+    <div>
+      <p style="margin:0 0 28px; font-size:clamp(1.3rem,2.4vw,2rem); line-height:1.4; font-weight:400; letter-spacing:-0.01em; color:#f3f8fc;">I build data driven solutions for the people products usually overlook, with a background in supply chain BI and operations where I translate raw data into business and operations insights.</p>
+      <p style="margin:0 0 22px; font-size:clamp(15px,1.2vw,17px); line-height:1.7; color:rgba(220,234,246,0.72); max-width:520px;">My biggest strength is awareness, grounded in respect for human dignity — I invest in understanding every stakeholder of a project, and I care just as much about the people I work alongside, committing to be aware and considerate of everyone I build with.</p>
+      <p style="margin:0; font-size:clamp(15px,1.2vw,17px); line-height:1.7; color:rgba(220,234,246,0.72); max-width:520px;">Every voice deserves to be heard, so I keep asking who benefits and who bears the burden at every step. The rest is taste: knowing what to add, what to leave out, and where the balance lives.</p>
+    </div>
+
+    <!-- capabilities -->
+    <div>
+      <div style="font-size:13px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(200,222,240,0.55); margin-bottom:8px;">Capabilities</div>
+      <div style="display:flex; flex-direction:column;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-top:1px solid rgba(200,222,240,0.16); font-size:clamp(17px,1.5vw,21px); font-weight:500;">BI Operations<span style="font-family:'Geist',monospace; font-size:13px; color:rgba(200,222,240,0.5);">01</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-top:1px solid rgba(200,222,240,0.16); font-size:clamp(17px,1.5vw,21px); font-weight:500;">Product Design<span style="font-family:'Geist',monospace; font-size:13px; color:rgba(200,222,240,0.5);">02</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-top:1px solid rgba(200,222,240,0.16); font-size:clamp(17px,1.5vw,21px); font-weight:500;">User Research<span style="font-family:'Geist',monospace; font-size:13px; color:rgba(200,222,240,0.5);">03</span></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-top:1px solid rgba(200,222,240,0.16); border-bottom:1px solid rgba(200,222,240,0.16); font-size:clamp(17px,1.5vw,21px); font-weight:500;">Research &amp; Strategy<span style="font-family:'Geist',monospace; font-size:13px; color:rgba(200,222,240,0.5);">04</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== REACH US ===================== -->
+<footer id="reach" data-screen-label="Reach Us" style="background:linear-gradient(180deg, #2b5478 0%, #3a6385 60%, #46708f 100%); color:#f1f7fb; font-family:'Geist',sans-serif; padding:clamp(80px,13vh,160px) clamp(24px,5vw,64px) clamp(40px,6vh,64px);">
+
+  <div style="max-width:1100px;">
+    <div style="font-size:13px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(210,228,242,0.6); margin-bottom:clamp(20px,3vh,32px);">Reach Us</div>
+    <h2 style="margin:0 0 clamp(36px,5vh,56px); font-size:clamp(2.4rem,6vw,5rem); font-weight:500; letter-spacing:-0.025em; line-height:1.04;">Let's build something<br><em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">worth</em> remembering.</h2>
+
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:18px;">
+      <a href="mailto:zhen_lin@berkeley.edu" style="display:inline-flex; align-items:center; gap:10px; background:#fff; color:#143150; padding:15px 28px; border-radius:10px; font-size:16px; font-weight:600; text-decoration:none; cursor:pointer;">Let's Talk
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <a href="mailto:zhen_lin@berkeley.edu" style="display:inline-flex; align-items:center; background:transparent; color:#f1f7fb; padding:15px 28px; border-radius:10px; font-size:16px; font-weight:500; text-decoration:none; border:1px solid rgba(241,247,251,0.32); cursor:pointer;">zhen_lin@berkeley.edu</a>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:clamp(28px,5vw,72px); margin-top:clamp(40px,6vh,64px); font-size:15px; color:rgba(210,228,242,0.82);">
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <span style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(210,228,242,0.55);">Phone</span>
+        <a href="tel:+17173793957" style="color:#f1f7fb; text-decoration:none;">717.379.3957</a>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <span style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(210,228,242,0.55);">Based in</span>
+        <span style="color:#f1f7fb;">Berkeley, CA</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <span style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(210,228,242,0.55);">LinkedIn</span>
+        <a href="https://linkedin.com/in/zhen-lin-psu" target="_blank" rel="noopener" style="color:#f1f7fb; text-decoration:none;">/in/zhen-lin-psu</a>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <span style="font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(210,228,242,0.55);">Résumé</span>
+        <a href="assets/Zhen_Lin_Resume.pdf" target="_blank" rel="noopener" style="color:#f1f7fb; text-decoration:none;">Download PDF</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px; margin-top:clamp(64px,11vh,130px); padding-top:28px; border-top:1px solid rgba(210,228,242,0.2);">
+    <span style="font-size:14px; color:rgba(210,228,242,0.6);">© 2026 Zhen Lin</span>
+    <div style="display:flex; gap:26px; font-size:14px;">
+      <a href="https://linkedin.com/in/zhen-lin-psu" target="_blank" rel="noopener" style="color:rgba(210,228,242,0.78); text-decoration:none; cursor:pointer;">LinkedIn</a>
+      <a href="mailto:zhen_lin@berkeley.edu" style="color:rgba(210,228,242,0.78); text-decoration:none; cursor:pointer;">Email</a>
+      <a href="assets/Zhen_Lin_Resume.pdf" target="_blank" rel="noopener" style="color:rgba(210,228,242,0.78); text-decoration:none; cursor:pointer;">Résumé</a>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: &quot;100%&quot;, &quot;height&quot;: &quot;100%&quot; },
+  &quot;accent&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#3fd2ff&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#3fd2ff&quot;, &quot;#5ad1c6&quot;, &quot;#7aa6ff&quot;, &quot;#b07bff&quot;] },
+  &quot;flapSpeed&quot;: { &quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1, &quot;min&quot;: 0.3, &quot;max&quot;: 2.5, &quot;step&quot;: 0.1, &quot;tsType&quot;: &quot;number&quot; }
+}">
+class Component extends DCLogic {
+  state = { phase: 'butterfly', menuOpen: false };
+  canvasRef = React.createRef();
+  heroRef = React.createRef();
+  hintRef = React.createRef();
+
+  componentDidMount() {
+    this.cv = this.canvasRef.current;
+    this.host = this.cv.parentNode;
+    this.size = 128;
+    this.basePx = 9;
+    this.t = 0; this.flap = 0;
+    this.morph = 0; this.morphTarget = 0;
+    this.burst = 0;
+    this.revealT = 1; this._revealed = true;
+    this._spring = 0.16; this._damp = 0.78;
+    this._drift = 0.0; this._driftTarget = 0.0;
+    this._exploding = false; this._explodeStart = 0;
+    this._gathering = false; this._gatherStart = 0;
+    this.mouseSpeed = 0;
+    this.lastMx = null; this.lastMy = null;
+    this._mx = 1e9; this._my = 1e9;
+    this.ctaRect = null;
+    this.modelReady = false;
+    // orientation controls (tweak after first render if needed)
+    this.SX = 1; this.SY = 1; this.swapXY = false;
+    this.rotY = 1.0; this.rotX = 0.27; this.rotZ = 1.32;
+
+    this._onMove = (e) => {
+      const r = this.cv.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      if (this.lastMx != null) {
+        const d = Math.hypot(x - this.lastMx, y - this.lastMy);
+        this.mouseSpeed = Math.min(1, this.mouseSpeed + d / 90);
+      }
+      this.lastMx = x; this.lastMy = y;
+      this._mx = x; this._my = y;
+    };
+    this._onLeave = () => { this._mx = 1e9; this._my = 1e9; };
+    this._onClick = (e) => this.handleClick(e);
+    window.addEventListener('pointermove', this._onMove);
+    this.host.addEventListener('pointerleave', this._onLeave);
+    this.host.addEventListener('click', this._onClick);
+
+    this.waitDeps(0);
+  }
+
+  waitDeps(n) {
+    const T = window.THREE;
+    if (T && T.GPUComputationRenderer && T.GLTFLoader && T.MeshSurfaceSampler) { this.initThree(); return; }
+    if (n > 200) { console.error('three deps did not load'); return; }
+    setTimeout(() => this.waitDeps(n + 1), 50);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._raf);
+    if (this._ro) this._ro.disconnect();
+    window.removeEventListener('pointermove', this._onMove);
+    this.host.removeEventListener('pointerleave', this._onLeave);
+    this.host.removeEventListener('click', this._onClick);
+    if (this.renderer) this.renderer.dispose();
+  }
+
+  componentDidUpdate(prev) {
+    if (this._ready && prev && prev.accent !== this.props.accent && this.mat) {
+      const a = this.hexToRgb(this.props.accent || '#3fd2ff');
+      this.mat.uniforms.uColor.value.setRGB(a.r, a.g, a.b);
+      this.haloMat.uniforms.uColor.value.setRGB(a.r, a.g, a.b);
+    }
+  }
+
+  hexToRgb(h) {
+    h = (h || '#3fd2ff').replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    return { r: parseInt(h.slice(0,2),16)/255, g: parseInt(h.slice(2,4),16)/255, b: parseInt(h.slice(4,6),16)/255 };
+  }
+
+  initThree() {
+    const THREE = window.THREE;
+    this.scene = new THREE.Scene();
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.cv, alpha: true, antialias: true, preserveDrawingBuffer: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setClearColor(0x000000, 0);
+    this.camera = new THREE.PerspectiveCamera(45, 1, 1, 8000);
+
+    this._ro = new ResizeObserver(() => this.layout());
+    this._ro.observe(this.host);
+    this.layout();
+
+    this._ready = true;
+    this.last = performance.now();
+    this.loop = this.loop.bind(this);
+    this._raf = requestAnimationFrame(this.loop);
+
+    this.loadModel();
+  }
+
+  loadModel() {
+    const THREE = window.THREE;
+    const loader = new THREE.GLTFLoader();
+    loader.load('butterflies.glb', (gltf) => {
+      gltf.scene.updateMatrixWorld(true);
+      const v = new THREE.Vector3();
+      // collect each mesh separately; the GLB is a swarm, so pick the single most
+      // compact mesh (one butterfly) rather than merging the stretched streak planes.
+      const groups = [];
+      gltf.scene.traverse((o) => {
+        if (o.isMesh && o.geometry && o.geometry.attributes.position) {
+          const pa = o.geometry.attributes.position;
+          const idx = o.geometry.index;
+          const m = o.matrixWorld;
+          const pts = [];
+          const mn = [1e9,1e9,1e9], mx = [-1e9,-1e9,-1e9];
+          const push = (i) => {
+            v.fromBufferAttribute(pa, i).applyMatrix4(m);
+            pts.push(v.x, v.y, v.z);
+            for (let k = 0; k < 3; k++) { const val = v.getComponent(k); if (val < mn[k]) mn[k] = val; if (val > mx[k]) mx[k] = val; }
+          };
+          if (idx) { for (let i = 0; i < idx.count; i++) push(idx.getX(i)); }
+          else { for (let i = 0; i < pa.count; i++) push(i); }
+          const cx = (mn[0]+mx[0])/2, cy = (mn[1]+mx[1])/2, cz = (mn[2]+mx[2])/2;
+          groups.push({ pts, c: [cx,cy,cz], verts: pa.count });
+        }
+      });
+      // The GLB is a swarm: each butterfly = a body mesh + wing meshes, all near the
+      // same center. Cluster meshes by centroid proximity and keep the richest cluster
+      // (one whole butterfly: body + wings).
+      const used = new Array(groups.length).fill(false);
+      let best = null;
+      for (let i = 0; i < groups.length; i++) {
+        if (used[i]) continue;
+        const cluster = [i];
+        for (let j = i + 1; j < groups.length; j++) {
+          if (used[j]) continue;
+          const d = Math.hypot(groups[i].c[0]-groups[j].c[0], groups[i].c[1]-groups[j].c[1], groups[i].c[2]-groups[j].c[2]);
+          const span = Math.max(1, Math.hypot(...groups[i].c));
+          if (d < span * 0.6 + 60) { cluster.push(j); used[j] = true; }
+        }
+        used[i] = true;
+        const verts = cluster.reduce((s, k) => s + groups[k].verts, 0);
+        if (!best || verts > best.verts) best = { cluster, verts };
+      }
+      const pts = [];
+      best.cluster.forEach((k) => { for (let n = 0; n < groups[k].pts.length; n++) pts.push(groups[k].pts[n]); });
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+      this.samplerMesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial());
+      this.sampler = new THREE.MeshSurfaceSampler(this.samplerMesh).build();
+      this.sampleRaw();
+      this.modelReady = true;
+      this.buildAll();
+    }, undefined, (err) => { console.error('GLB load error', err); });
+  }
+
+  sampleRaw() {
+    const THREE = window.THREE;
+    const number = this.size * this.size;
+    const raw = new Float32Array(number * 3);
+    const tmp = new THREE.Vector3();
+    const mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9];
+    for (let i = 0; i < number; i++) {
+      this.sampler.sample(tmp);
+      raw[3*i] = tmp.x; raw[3*i+1] = tmp.y; raw[3*i+2] = tmp.z;
+      for (let k = 0; k < 3; k++) {
+        const val = tmp.getComponent(k);
+        if (val < mn[k]) mn[k] = val;
+        if (val > mx[k]) mx[k] = val;
+      }
+    }
+    const ext = [mx[0]-mn[0], mx[1]-mn[1], mx[2]-mn[2]];
+    const order = [0,1,2].sort((a,b) => ext[b] - ext[a]); // largest extent first
+    this.raw = raw;
+    this.rawCenter = [(mn[0]+mx[0])/2, (mn[1]+mx[1])/2, (mn[2]+mx[2])/2];
+    this.rawExt = ext;
+    this.axisOrder = order;
+  }
+
+  layout() {
+    const W = Math.max(1, Math.round(this.host.clientWidth));
+    const H = Math.max(1, Math.round(this.host.clientHeight));
+    const changed = (W !== this.W || H !== this.H);
+    this.W = W; this.H = H;
+    this.renderer.setSize(W, H, false);
+    this.camera.aspect = W / H;
+    this.camDist = (H / 2) / Math.tan((this.camera.fov * Math.PI / 180) / 2);
+    this.camera.position.set(0, 0, this.camDist);
+    this.camera.lookAt(0, 0, 0);
+    this.camera.updateProjectionMatrix();
+    this.computeButtonRect();
+    if (this.mat) {
+      const ps = this.basePx * this.camDist;
+      this.mat.uniforms.uParticleSize.value = ps;
+      this.haloMat.uniforms.uParticleSize.value = ps * 2.7;
+    }
+    if (this.velUniforms && this.velUniforms.uBounds) {
+      this.velUniforms.uBounds.value.set(this.W * 0.42, this.boundsY());
+    }
+    if (changed && this._ready && this.modelReady) this.buildAll();
+  }
+
+  boundsY() {
+    // vertical containment must always clear the reassembled button, or the
+    // boundary force squishes the bottom of "Explore Work". Tie it to the button.
+    const R = this.ctaRect;
+    const buttonExtent = R ? (R.y + R.h) - this.H / 2 + 80 : this.H * 0.42;
+    return Math.max(this.H * 0.42, buttonExtent);
+  }
+
+  computeButtonRect() {
+    const W = this.W, H = this.H, mobile = W < 820;
+    const bw = Math.min(300, W * 0.72);
+    const bh = Math.max(56, 64 * Math.min(1, W/1100));
+    const bx = mobile ? (W - bw) / 2 : Math.min(64, Math.max(24, W * 0.05));
+    const by = H * 0.82;
+    this.ctaRect = { x: bx, y: by, w: bw, h: bh };
+    this.forceUpdate();
+  }
+
+  // build butterfly target positions (world, centered) from sampled model
+  butterflyTargets() {
+    const number = this.size * this.size;
+    const out = new Float32Array(number * 3);
+    const o = this.axisOrder, c = this.rawCenter, ext = this.rawExt, raw = this.raw;
+    let aX = o[0], aY = o[1], aZ = o[2];        // largest -> X(width), mid -> Y(height), small -> Z(depth)
+    if (this.swapXY) { const t = aX; aX = aY; aY = t; }
+    const targetH = Math.min(this.W, this.H) * 0.58;
+    const targetW = this.W * 0.8;
+    const scale = Math.min(targetH / (ext[aY] || 1), targetW / (ext[aX] || 1));
+    for (let i = 0; i < number; i++) {
+      const x = (raw[3*i + aX] - c[aX]) * scale * this.SX;
+      const y = (raw[3*i + aY] - c[aY]) * scale * this.SY;
+      const z = (raw[3*i + aZ] - c[aZ]) * scale;
+      out[3*i] = x; out[3*i+1] = y; out[3*i+2] = z;
+    }
+    return out;
+  }
+
+  sample2D(drawFn, step) {
+    const W = this.W, H = this.H;
+    if (!this._off) this._off = document.createElement('canvas');
+    const o = this._off; o.width = W; o.height = H;
+    const g = o.getContext('2d');
+    g.clearRect(0,0,W,H);
+    drawFn(g);
+    const data = g.getImageData(0,0,W,H).data;
+    const pts = [];
+    for (let y = 0; y < H; y += step) {
+      for (let x = 0; x < W; x += step) {
+        if (data[(y*W + x)*4 + 3] > 130) {
+          pts.push(x + (Math.random()-0.5)*step - W/2, (H/2 - y) + (Math.random()-0.5)*step);
+        }
+      }
+    }
+    return pts;
+  }
+
+  drawButton(g) {
+    const R = this.ctaRect; if (!R) return;
+    const rad = R.h / 2;
+    g.strokeStyle = '#fff'; g.lineWidth = 2;
+    g.beginPath();
+    g.moveTo(R.x + rad, R.y);
+    g.arcTo(R.x + R.w, R.y, R.x + R.w, R.y + rad, rad);
+    g.arcTo(R.x + R.w, R.y + R.h, R.x + R.w - rad, R.y + R.h, rad);
+    g.arcTo(R.x, R.y + R.h, R.x, R.y + R.h - rad, rad);
+    g.arcTo(R.x, R.y, R.x + rad, R.y, rad);
+    g.closePath(); g.stroke();
+    g.fillStyle = '#fff';
+    g.font = '600 ' + Math.round(R.h * 0.34) + "px Geist, system-ui, sans-serif";
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('Explore Work', R.x + R.w/2, R.y + R.h/2 + 1);
+  }
+
+  buildAll() {
+    if (!this.modelReady) return;
+    const THREE = window.THREE;
+    const size = this.size, number = size * size;
+
+    const bflyT = this.butterflyTargets();         // [x,y,z,...] number*3
+    const btn = this.sample2D((g) => this.drawButton(g), 2);
+    const nT = btn.length / 2;
+
+    const A = new Float32Array(number * 4);
+    const B = new Float32Array(number * 4);
+    const P = new Float32Array(number * 4);
+    const posAttr = new Float32Array(number * 3);
+    const uvAttr = new Float32Array(number * 2);
+    const edgeRaw = new Float32Array(number);
+    const gradRaw = new Float32Array(number);
+    let maxAbsX = 1e-6;
+    let minY = 1e9, maxY = -1e9;
+
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        const idx = i * size + j;
+        const ax = bflyT[3*idx], ay = bflyT[3*idx+1], az = bflyT[3*idx+2];
+        const absx = Math.abs(ax);
+        edgeRaw[idx] = absx; if (absx > maxAbsX) maxAbsX = absx;
+        gradRaw[idx] = ay; if (ay < minY) minY = ay; if (ay > maxY) maxY = ay;
+        A[4*idx] = ax; A[4*idx+1] = ay; A[4*idx+2] = az; A[4*idx+3] = 1;
+        const ti = (idx % nT) * 2;
+        B[4*idx] = btn[ti]; B[4*idx+1] = btn[ti+1]; B[4*idx+2] = 0; B[4*idx+3] = 1;
+        P[4*idx]   = ax + (Math.random()-0.5)*40;
+        P[4*idx+1] = ay + (Math.random()-0.5)*40;
+        P[4*idx+2] = az + (Math.random()-0.5)*30;
+        P[4*idx+3] = 1;
+        posAttr[3*idx] = ax; posAttr[3*idx+1] = ay; posAttr[3*idx+2] = az;
+        uvAttr[2*idx] = (j + 0.5) / size;
+        uvAttr[2*idx+1] = (i + 0.5) / size;
+      }
+    }
+
+    const texA = new THREE.DataTexture(A, size, size, THREE.RGBAFormat, THREE.FloatType); texA.needsUpdate = true;
+    const texB = new THREE.DataTexture(B, size, size, THREE.RGBAFormat, THREE.FloatType); texB.needsUpdate = true;
+
+    // per-particle edge factor: 0 at the wing stem (body axis) -> 1 at the wing edge,
+    // with organic jitter so the brightness gradient reads natural, not banded.
+    const edgeAttr = new Float32Array(number);
+    const gradAttr = new Float32Array(number);
+    const ySpan = (maxY - minY) || 1;
+    for (let idx = 0; idx < number; idx++) {
+      let t = edgeRaw[idx] / maxAbsX;
+      t = Math.pow(t, 0.8);                       // ease so mid-wing already glows
+      t += (Math.random() - 0.5) * 0.22;          // organic scatter
+      edgeAttr[idx] = Math.max(0, Math.min(1, t));
+      // steady top->bottom gradient coordinate (0..1) for the blue->green fade
+      gradAttr[idx] = (gradRaw[idx] - minY) / ySpan;
+    }
+
+    const gpu = new THREE.GPUComputationRenderer(size, size, this.renderer);
+    if (this.renderer.capabilities.isWebGL2 === false) gpu.setDataType(THREE.HalfFloatType);
+    const pos0 = gpu.createTexture();
+    const vel0 = gpu.createTexture();
+    pos0.image.data.set(P);
+
+    const velVar = gpu.addVariable('uCurrentVelocity', this.simVelocity(), vel0);
+    const posVar = gpu.addVariable('uCurrentPosition', this.simPosition(), pos0);
+    gpu.setVariableDependencies(velVar, [posVar, velVar]);
+    gpu.setVariableDependencies(posVar, [posVar, velVar]);
+
+    // 3/4 side-view orientation for the flapping butterfly (yaw -> pitch -> roll)
+    const m4 = new THREE.Matrix4().makeRotationY(this.rotY);
+    m4.premultiply(new THREE.Matrix4().makeRotationX(this.rotX));
+    m4.premultiply(new THREE.Matrix4().makeRotationZ(this.rotZ));
+    const viewRot = new THREE.Matrix3().setFromMatrix4(m4);
+
+    const vu = velVar.material.uniforms;
+    vu.uOriginalA = { value: texA };
+    vu.uOriginalB = { value: texB };
+    vu.uViewRot = { value: viewRot };
+    vu.uMorph = { value: this.morph };
+    vu.uSpring = { value: this._spring };
+    vu.uDamp = { value: this._damp };
+    vu.uFlapCos = { value: 1 };
+    vu.uFlapSin = { value: 0 };
+    vu.uBob = { value: 0 };
+    vu.uMouse = { value: new THREE.Vector3(1e6, 1e6, 0) };
+    vu.uMouseSpeed = { value: 0 };
+    vu.uBurst = { value: 0 };
+    vu.uBounds = { value: new THREE.Vector2(this.W * 0.42, this.boundsY()) };
+    vu.uDrift = { value: this._drift };
+    vu.uTime = { value: 0 };
+
+    const err = gpu.init();
+    if (err) console.error('GPGPU init error:', err);
+
+    this.gpu = gpu; this.posVar = posVar; this.velVar = velVar; this.velUniforms = vu;
+
+    const a = this.hexToRgb(this.props.accent || '#3fd2ff');
+    const ps = this.basePx * this.camDist;
+    const makeMat = (sizeMul, alpha) => new THREE.ShaderMaterial({
+      uniforms: {
+        uPositionTexture: { value: gpu.getCurrentRenderTarget(posVar).texture },
+        uVelocityTexture: { value: gpu.getCurrentRenderTarget(velVar).texture },
+        uParticleSize: { value: ps * sizeMul },
+        uColor: { value: new THREE.Color(a.r, a.g, a.b) },
+        uMorph: { value: 0 },
+        uTime: { value: 0 },
+        uAlpha: { value: alpha }
+      },
+      vertexShader: this.particleVertex(),
+      fragmentShader: this.particleFragment(),
+      transparent: true, depthWrite: false, depthTest: false,
+      blending: THREE.AdditiveBlending
+    });
+    this.mat = makeMat(1, 1.0);
+    this.haloMat = makeMat(2.7, 0.24);
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(posAttr, 3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(uvAttr, 2));
+    geo.setAttribute('aEdge', new THREE.BufferAttribute(edgeAttr, 1));
+    geo.setAttribute('aGrad', new THREE.BufferAttribute(gradAttr, 1));
+
+    if (this.points) { this.scene.remove(this.points); this.points.geometry.dispose(); }
+    if (this.halo) { this.scene.remove(this.halo); }
+    this.points = new THREE.Points(geo, this.mat);
+    this.halo = new THREE.Points(geo, this.haloMat);
+    this.scene.add(this.halo);
+    this.scene.add(this.points);
+  }
+
+  simVelocity() {
+    return [
+      'uniform sampler2D uOriginalA;',
+      'uniform sampler2D uOriginalB;',
+      'uniform mat3 uViewRot;',
+      'uniform float uMorph;',
+      'uniform float uSpring;',
+      'uniform float uDamp;',
+      'uniform float uFlapCos;',
+      'uniform float uFlapSin;',
+      'uniform float uBob;',
+      'uniform vec3 uMouse;',
+      'uniform float uMouseSpeed;',
+      'uniform float uBurst;',
+      'uniform vec2 uBounds;',
+      'uniform float uDrift;',
+      'uniform float uTime;',
+      'void main() {',
+      '  vec2 uv = gl_FragCoord.xy / resolution.xy;',
+      '  vec3 pos = texture2D(uCurrentPosition, uv).xyz;',
+      '  vec3 vel = texture2D(uCurrentVelocity, uv).xyz;',
+      '  vec3 oa = texture2D(uOriginalA, uv).xyz;',
+      '  vec3 ob = texture2D(uOriginalB, uv).xyz;',
+      // proper hinge in butterfly-local space: wings fold inward (x) and lift together
+      // out of the wing plane (local z). Approved form — kept intact.
+      '  vec3 fl = vec3(oa.x * uFlapCos, oa.y + uBob, oa.z + abs(oa.x) * uFlapSin);',
+      '  vec3 target = mix(uViewRot * fl, ob, uMorph);',
+      '  vel += (target - pos) * uSpring;',
+      '  vel += vec3(sin(pos.y*0.012 + uTime), cos(pos.x*0.012 + uTime*1.1), sin((pos.x+pos.y)*0.01 + uTime*0.8)) * 0.8 * uDrift;',
+      '  float md = distance(pos, uMouse);',
+      '  float R = 95.0;',
+      '  if (md < R) {',
+      '    vec3 pd = normalize(pos - uMouse + vec3(0.0001));',
+      '    vel += pd * (1.0 - md / R) * 5.5 * uMouseSpeed;',
+      '  }',
+      '  if (uBurst > 0.001) {',
+      '    vec3 rd = normalize(pos + vec3(0.0001, 0.0001, 0.0));',
+      '    vel += rd * uBurst;',
+      '    vel.z += uBurst * 0.4;',
+      '  }',
+      // soft containment: only while particles are flung out (high drift). The resting
+      // butterfly is exempt, so its wings never get squished/tilted on large screens.
+      '  float cont = 0.06 * smoothstep(0.3, 0.7, uDrift);',
+      '  vec2 over = abs(pos.xy) - uBounds;',
+      '  if (over.x > 0.0) vel.x -= sign(pos.x) * over.x * cont;',
+      '  if (over.y > 0.0) vel.y -= sign(pos.y) * over.y * cont;',
+      '  float zover = abs(pos.z) - uBounds.y * 0.5;',
+      '  if (zover > 0.0) vel.z -= sign(pos.z) * zover * cont;',
+      '  vel *= uDamp;',
+      '  gl_FragColor = vec4(vel, 1.0);',
+      '}'
+    ].join('\n');
+  }
+
+  simPosition() {
+    return [
+      'void main() {',
+      '  vec2 uv = gl_FragCoord.xy / resolution.xy;',
+      '  vec3 pos = texture2D(uCurrentPosition, uv).xyz;',
+      '  vec3 vel = texture2D(uCurrentVelocity, uv).xyz;',
+      '  pos += vel;',
+      '  gl_FragColor = vec4(pos, 1.0);',
+      '}'
+    ].join('\n');
+  }
+
+  particleVertex() {
+    return [
+      'uniform sampler2D uPositionTexture;',
+      'uniform sampler2D uVelocityTexture;',
+      'uniform float uParticleSize;',
+      'uniform float uMorph;',
+      'attribute float aEdge;',
+      'attribute float aGrad;',
+      'varying float vSpeed;',
+      'varying float vEdge;',
+      'varying float vGrad;',
+      'varying float vRand;',
+      'void main() {',
+      '  vec3 p = texture2D(uPositionTexture, uv).xyz;',
+      '  vec3 v = texture2D(uVelocityTexture, uv).xyz;',
+      '  vSpeed = length(v);',
+      '  vEdge = aEdge;',
+      '  vGrad = aGrad;',
+      '  vRand = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);',
+      '  vec4 mv = modelViewMatrix * vec4(p, 1.0);',
+      '  gl_PointSize = uParticleSize * mix(1.0, 0.55, uMorph) / max(0.0001, -mv.z);',
+      '  gl_Position = projectionMatrix * mv;',
+      '}'
+    ].join('\n');
+  }
+
+  particleFragment() {
+    return [
+      'uniform vec3 uColor;',
+      'uniform float uAlpha;',
+      'uniform float uMorph;',
+      'varying float vSpeed;',
+      'varying float vEdge;',
+      'varying float vGrad;',
+      'varying float vRand;',
+      // Belize Hole + Silver + Asbestos blend: light silver at the stem -> asbestos grey
+      // -> belize blue at the wing edge (dark end lifted so it stays visible)
+      'vec3 palette(float t) {',
+      '  t = clamp(t, 0.0, 1.0) * 5.0;',
+      '  vec3 c0 = vec3(0.910, 0.925, 0.935);',
+      '  vec3 c1 = vec3(0.741, 0.765, 0.780);',
+      '  vec3 c2 = vec3(0.498, 0.549, 0.553);',
+      '  vec3 c3 = vec3(0.300, 0.550, 0.720);',
+      '  vec3 c4 = vec3(0.180, 0.470, 0.700);',
+      '  vec3 c5 = vec3(0.130, 0.400, 0.620);',
+      '  vec3 col = c0;',
+      '  col = mix(col, c1, clamp(t, 0.0, 1.0));',
+      '  col = mix(col, c2, clamp(t - 1.0, 0.0, 1.0));',
+      '  col = mix(col, c3, clamp(t - 2.0, 0.0, 1.0));',
+      '  col = mix(col, c4, clamp(t - 3.0, 0.0, 1.0));',
+      '  col = mix(col, c5, clamp(t - 4.0, 0.0, 1.0));',
+      '  return col;',
+      '}',
+      'void main() {',
+      '  float d = length(gl_PointCoord - 0.5);',
+      '  if (d > 0.5) discard;',
+      '  float soft = smoothstep(0.5, 0.0, d);',
+      '  float bright = clamp(vSpeed * 0.05, 0.0, 1.0);',
+      '  float e = vEdge;',
+      // steady fade from the wing STEM (body) out to the wing EDGE (spine-to-edge)
+      // dither the lookup per particle so adjacent stops interleave -> smooth, band-free fade
+      '  float te = clamp(e + (vRand - 0.5) * 0.24, 0.0, 1.0);',
+      '  vec3 hue = palette(te);',
+      '  float lum = mix(1.05, 1.35, e);',
+      '  vec3 col = hue * lum;',
+      // lift saturation for richer, more vivid blues
+      '  float gl = dot(col, vec3(0.299, 0.587, 0.114));',
+      '  col = clamp(mix(vec3(gl), col, 1.45), 0.0, 1.7);',
+      '  col = mix(col, vec3(1.0), bright * 0.35);',  // motion adds white-hot flecks
+      '  col = mix(col, vec3(0.300, 0.550, 0.720), uMorph * 0.85);',  // button settles to belize blue
+      '  float a = soft * (0.26 + e * 0.26 + bright * 0.22) * uAlpha;',
+      '  gl_FragColor = vec4(col, a);',
+      '}'
+    ].join('\n');
+  }
+
+  handleClick(e) {
+    if (!this._ready || !this.gpu) return;
+    if (e.target.closest('nav')) return;
+    if (this.morphTarget > 0.5) {
+      // already the button: CTA click pulses; clicking elsewhere returns to butterfly
+      if (this.inCta(e)) { this.burst = 12; this.scrollToWork(); return; }
+      this.morphTarget = 0; this._exploding = false; this._gathering = false; this._spring = 0.16; this._damp = 0.78; this.burst = 14;
+      this._driftTarget = 0.0;   // calm butterfly again
+      return;
+    }
+    // begin the slow explosion timeline
+    this._exploding = true;
+    this._gathering = false;
+    this._explodeStart = this.t;
+    this.morphTarget = 0; this.morph = 0;
+    this.burst = 16;          // gentle, contained impulse
+    this._spring = 0.0;       // release the shape so particles fly free
+    this._damp = 0.95;        // coast outward slowly
+    this._driftTarget = 1.0;  // dreamy drift during the explosion
+    this._revealed = true;
+  }
+
+  scrollToWork() {
+    const el = document.getElementById('work');
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+
+  inCta(e) {
+    const r = this.cv.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const R = this.ctaRect;
+    return R && x >= R.x && x <= R.x + R.w && y >= R.y && y <= R.y + R.h;
+  }
+
+  loop(now) {
+    let dt = (now - this.last) / 1000; if (dt > 0.05) dt = 0.05;
+    this.last = now; this.t += dt;
+    this.flap += dt * 2.0 * (this.props.flapSpeed ?? 1);
+
+    if (this.gpu) {
+      // gentle approved flap range (small lift keeps the toward-camera tilt subtle)
+      const fAng = 0.12 + 0.78 * (0.5 + 0.5 * Math.sin(this.flap));
+      const vu = this.velUniforms;
+      vu.uTime.value = this.t % 1000;
+      vu.uFlapCos.value = Math.cos(fAng);
+      vu.uFlapSin.value = Math.sin(fAng);
+      vu.uBob.value = Math.sin(this.t * 0.8) * 6;
+
+      // ---- explosion timeline: big slow burst -> expanded float -> gather to button ----
+      if (this._exploding) {
+        const el = this.t - this._explodeStart;
+        if (el < 0.8) {
+          // expansion: particles drift out freely, no shape pull
+          this._spring = 0.0; this._damp = 0.955; this._driftTarget = 1.0;
+        } else if (el < 2.8) {
+          // expanded float: hang in an open cloud, very gentle drift
+          this._spring = 0.003; this._damp = 0.94; this._driftTarget = 0.8;
+        } else {
+          // hand off to a slow, eased gather (handled below)
+          this._exploding = false;
+          this._gathering = true;
+          this._gatherStart = this.t;
+          this._driftTarget = 0.0;   // button holds crisp & still
+        }
+      }
+
+      // eased reassembly: smoothstep over a fixed duration so particles drift into the
+      // button shape (slow start, gentle settle) instead of being snapped to it
+      if (this._gathering) {
+        const gp = Math.min(1, (this.t - this._gatherStart) / 3.0);
+        const eased = gp * gp * (3.0 - 2.0 * gp);          // smoothstep ease in/out
+        this.morphTarget = 1;
+        this.morph = eased;                                 // drive morph along the eased curve
+        this._spring = 0.01 + 0.045 * eased;                // pull builds up gradually
+        this._damp = 0.92 - 0.05 * eased;
+        this._driftTarget = 0.18 * (1.0 - eased);           // residual drift fades out
+        if (gp >= 1) { this._gathering = false; this._spring = 0.05; this._damp = 0.86; }
+      }
+      vu.uSpring.value = this._spring;
+      vu.uDamp.value = this._damp;
+      this._drift += (this._driftTarget - this._drift) * 0.05;
+      vu.uDrift.value = this._drift;
+
+      // morph eases (exponential) only when NOT in the timed gather
+      if (!this._gathering) {
+        const morphRate = this.morphTarget > 0.5 ? 0.016 : 0.06;
+        this.morph += (this.morphTarget - this.morph) * morphRate;
+      }
+      vu.uMorph.value = this.morph;
+      this.mat.uniforms.uMorph.value = this.morph;
+      this.haloMat.uniforms.uMorph.value = this.morph;
+      this.mat.uniforms.uTime.value = this.t;
+      this.haloMat.uniforms.uTime.value = this.t;
+      // fade the soft halo out as the crisp button forms
+      this.haloMat.uniforms.uAlpha.value = 0.24 * (1.0 - this.morph * 0.85);
+      vu.uBurst.value = this.burst;
+      this.burst *= 0.9; if (this.burst < 0.01) this.burst = 0;
+      this.mouseSpeed *= 0.9;
+      vu.uMouseSpeed.value = this.mouseSpeed;
+      vu.uMouse.value.set(this._mx - this.W/2, this.H/2 - this._my, 0);
+
+      this.gpu.compute();
+      const pt = this.gpu.getCurrentRenderTarget(this.posVar).texture;
+      const vt = this.gpu.getCurrentRenderTarget(this.velVar).texture;
+      this.mat.uniforms.uPositionTexture.value = pt;
+      this.mat.uniforms.uVelocityTexture.value = vt;
+      this.haloMat.uniforms.uPositionTexture.value = pt;
+      this.haloMat.uniforms.uVelocityTexture.value = vt;
+      this.renderer.render(this.scene, this.camera);
+
+      const wantPhase = this.morph > 0.85 ? 'button' : 'butterfly';
+      if (wantPhase !== this.state.phase) this.setState({ phase: wantPhase });
+    }
+
+    const rt = this._revealed ? 1 : 0;
+    this.revealT += (rt - this.revealT) * 0.045;
+    if (Math.abs(rt - this.revealT) < 0.001) this.revealT = rt;
+    if (this.heroRef.current) {
+      this.heroRef.current.style.opacity = this.revealT.toFixed(3);
+      this.heroRef.current.style.transform = 'translateY(' + ((1 - this.revealT) * 30).toFixed(1) + 'px)';
+    }
+    if (this.hintRef.current) this.hintRef.current.style.opacity = (1 - this.revealT).toFixed(3);
+
+    this._raf = requestAnimationFrame(this.loop);
+  }
+
+  renderVals() {
+    const R = this.ctaRect;
+    const inBtn = this.state.phase === 'button';
+    const ctaStyle = R
+      ? 'position:absolute; z-index:20; left:' + R.x + 'px; top:' + R.y + 'px; width:' + R.w + 'px; height:' + R.h + 'px; border-radius:' + (R.h/2) + 'px; cursor:pointer; pointer-events:' + (inBtn ? 'auto' : 'none') + ';'
+      : 'display:none;';
+    const heroStyle = 'position:absolute; z-index:10; left:clamp(24px,5vw,64px); top:18%; max-width:760px; pointer-events:none; opacity:0; transform:translateY(30px);';
+    return {
+      canvasRef: this.canvasRef,
+      heroRef: this.heroRef,
+      hintRef: this.hintRef,
+      heroStyle,
+      ctaStyle,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      onCta: () => { this.burst = 16; this.scrollToWork(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

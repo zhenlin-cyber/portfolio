@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#020a14; }
+  a { color:#3fd2ff; text-decoration:none; transition:color .25s ease; }
+  a:hover { color:#8ae4ff; }
+  .cs-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(24px,3vw,56px); }
+  @media (max-width:819px) { .cs-metrics { grid-template-columns:1fr; gap:28px; } }
+</style>
+</helmet>
+
+<article data-screen-label="Case: Rent Splitter" style="background:linear-gradient(180deg,#020a14 0%,#061829 45%,#0c2540 100%); color:#eaf1f8; font-family:'Geist',sans-serif; min-height:100vh; padding:clamp(32px,5vh,56px) clamp(20px,3vw,48px) clamp(80px,12vh,140px);">
+  <div style="max-width:min(1680px,94vw); margin:0 auto;">
+
+    <a href="home.dc.html#work" style="display:inline-block; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.6); margin-bottom:clamp(48px,8vh,96px);">← Selected Work</a>
+
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px; font-size:15px; color:rgba(190,215,240,0.6); margin-bottom:22px;">
+      <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>FairShare</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>React, Vite, Firebase</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>Solo build</span>
+    </div>
+
+    <h1 style="margin:0 0 clamp(28px,4vh,44px); font-size:clamp(2.4rem,6vw,4.6rem); font-weight:500; letter-spacing:-0.03em; line-height:1.02;">Rent <em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">Splitter</em></h1>
+
+    <p style="margin:0 0 clamp(56px,9vh,104px); font-size:clamp(1.3rem,2.2vw,1.85rem); line-height:1.5; color:#eaf1f8; max-width:min(1100px, 72ch); text-wrap:pretty;">Splitting a household bill fairly is rarely one calculation. Rent scales with room size, utilities split evenly, parking belongs to whoever owns the car, and someone always owes a one-off. Most tools force all of it into a single method, so the arithmetic ends up in a group chat.</p>
+
+    <figure style="margin:0 0 clamp(48px,7vh,80px);">
+      <div style="border-radius:14px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#fff;">
+        <img src="assets/rent-splitter.webp" alt="FairShare split editor with per-person breakdown" style="display:block; width:100%; height:auto;">
+      </div>
+      <figcaption style="margin-top:24px; font-size:23px; line-height:1.6; color:rgba(190,215,240,0.55); max-width:min(1000px, 78ch);">Each expense picks its own split method. The panel at right recalculates live, showing every roommate's total alongside the line-by-line breakdown that produced it — so anyone can check the number rather than trust it.</figcaption>
+    </figure>
+
+        <div style="height:1px; background:rgba(190,215,240,0.14); margin-bottom:clamp(40px,6vh,64px);"></div>
+
+    <h2 style="margin:0 0 clamp(28px,4vh,40px); font-size:clamp(1.1rem,1.6vw,1.25rem); font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.5);">Outcome</h2>
+
+    <div class="cs-metrics" style="margin-bottom:clamp(48px,7vh,80px);">
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">4</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Split methods per line item — equal, square footage, percentage, or assigned to one payer — plus manual adjustments.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">Every line</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Traceable back to the expense it came from, so a disputed total can be settled by looking rather than arguing.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">Shareable</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Saved splits open in a read-only view for roommates without an account. Groups and auth run on Firebase.</p>
+      </div>
+    </div>
+
+    <div style="height:1px; background:rgba(190,215,240,0.14); margin-bottom:clamp(32px,4vh,48px);"></div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:36px; font-size:17px;">
+      <a href="https://zhenlin-cyber.github.io/rent-splitter/">Live site →</a>
+      <a href="https://github.com/zhenlin-cyber/rent-splitter">Repository →</a>
+    </div>
+
+  </div>
+</article>
+</x-dc>
+</body>
+</html>

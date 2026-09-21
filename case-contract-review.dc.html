@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#020a14; }
+  a { color:#3fd2ff; text-decoration:none; transition:color .25s ease; }
+  a:hover { color:#8ae4ff; }
+  .cs-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(24px,3vw,56px); }
+  @media (max-width:819px) { .cs-metrics { grid-template-columns:1fr; gap:28px; } }
+</style>
+</helmet>
+
+<article data-screen-label="Case: Contract Review" style="background:linear-gradient(180deg,#020a14 0%,#061829 45%,#0c2540 100%); color:#eaf1f8; font-family:'Geist',sans-serif; min-height:100vh; padding:clamp(32px,5vh,56px) clamp(20px,3vw,48px) clamp(80px,12vh,140px);">
+  <div style="max-width:min(1680px,94vw); margin:0 auto;">
+
+    <a href="home.dc.html#work" style="display:inline-block; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.6); margin-bottom:clamp(48px,8vh,96px);">← Selected Work</a>
+
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px; font-size:15px; color:rgba(190,215,240,0.6); margin-bottom:22px;">
+      <span>2026</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>In progress</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>PolicyLens</span><span style="width:1px; height:13px; background:rgba(190,215,240,0.25);"></span>
+      <span>AI, document analysis</span>
+    </div>
+
+    <h1 style="margin:0 0 clamp(28px,4vh,44px); font-size:clamp(2.4rem,6vw,4.6rem); font-weight:500; letter-spacing:-0.03em; line-height:1.02;">Contract <em style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400;">Review</em></h1>
+
+    <p style="margin:0 0 clamp(56px,9vh,104px); font-size:clamp(1.3rem,2.2vw,1.85rem); line-height:1.5; color:#eaf1f8; max-width:min(1100px, 72ch); text-wrap:pretty;">Schools sign data processing agreements they do not have the legal capacity to read. The clauses that matter most — breach notification windows, sub-processor rights, governing law — sit twenty pages deep in language written by the vendor's counsel. PolicyLens reads any Canvas or EdTech DPA against fifteen California laws and ethics frameworks, surfaces every gap, and returns remediation language a legal team can use.</p>
+
+    <figure style="margin:0 0 clamp(48px,7vh,80px);">
+      <div style="border-radius:14px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; background:#04101f;">
+        <img src="assets/contract-review.webp" alt="PolicyLens landing page with clause-level contract scoring" style="display:block; width:100%; height:auto;">
+      </div>
+      <figcaption style="margin-top:24px; font-size:23px; line-height:1.6; color:rgba(190,215,240,0.55); max-width:min(1000px, 78ch);">Clause-level scoring drives the whole interface. Each provision is scored out of 100 and tagged with what it fails — a missing annual certification, a governing-law clause pointing outside California — so a reader can see the shape of a contract's risk before reading a word of it.</figcaption>
+    </figure>
+
+        <div style="height:1px; background:rgba(190,215,240,0.14); margin-bottom:clamp(40px,6vh,64px);"></div>
+
+    <h2 style="margin:0 0 clamp(28px,4vh,40px); font-size:clamp(1.1rem,1.6vw,1.25rem); font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:rgba(190,215,240,0.5);">Where it stands</h2>
+
+    <div class="cs-metrics" style="margin-bottom:clamp(48px,7vh,80px);">
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">15</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">California laws and ethics frameworks each clause is read against.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">0–100</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Per-clause score, rolled into one overall figure with critical failures called out separately.</p>
+      </div>
+      <div>
+        <div style="font-size:clamp(2.4rem,4.5vw,3.4rem); font-weight:500; letter-spacing:-0.03em; line-height:1; color:#3fd2ff;">No account</div>
+        <p style="margin:14px 0 0; font-size:17px; line-height:1.6; color:rgba(190,215,240,0.66);">Required to run an audit. Built for California K–12 and higher education.</p>
+      </div>
+    </div>
+
+    <p style="margin:0; font-size:clamp(17px,1.35vw,19px); line-height:1.7; color:rgba(190,215,240,0.72); max-width:min(1000px, 70ch); text-wrap:pretty;">Still in progress. The output is deliberately framed as a starting point for a legal conversation rather than legal advice — the tool tells an administrator where to look and what to ask for, and leaves the judgment with the people accountable for it.</p>
+
+  </div>
+</article>
+</x-dc>
+</body>
+</html>
